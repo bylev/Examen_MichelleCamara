@@ -1,28 +1,44 @@
 services:
-  mysql:
-    image: mysql:8
-    environment:
-      MYSQL_DATABASE: laboratorio
-      MYSQL_USER: laboratorio
-      MYSQL_PASSWORD: laboratorio
-      MYSQL_ROOT_PASSWORD: laboratorio_root
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: laboratorio-api
+
     ports:
       - "8000:8000"
+
     depends_on:
       - mysql
+
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_DATABASE: laboratorio
       MYSQL_USER: laboratorio
       MYSQL_PASSWORD: laboratorio
+
+    restart: unless-stopped
+
+
+  mysql:
+    image: mysql:8
+
+    container_name: laboratorio-mysql
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laboratorio
+      MYSQL_USER: laboratorio
+      MYSQL_PASSWORD: laboratorio
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    restart: unless-stopped
+
 
 volumes:
   mysql_data:
